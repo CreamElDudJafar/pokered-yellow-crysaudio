@@ -21,6 +21,7 @@ HallOfFameNoopScript:
 	ret
 
 HallOfFameResetEventsAndSaveScript:
+	callfar CGBSetCPU1xSpeed
 	call Delay3
 	ld a, [wLetterPrintingDelayFlags]
 	push af

@@ -40,6 +40,7 @@ PrepareOakSpeech:
 	jp CopyData
 
 OakSpeech:
+	callfar CGBSetCPU1xSpeed
 	ld a, SFX_STOP_ALL_MUSIC
 	call PlaySound
 	ld a, 0 ; BANK(Music_Routes2)
@@ -50,6 +51,7 @@ OakSpeech:
 	call LoadTextBoxTilePatterns
 	call PrepareOakSpeech
 	predef InitPlayerData2
+	call RunDefaultPaletteCommand
 	ld hl, wNumBoxItems
 	ld a, POTION
 	ld [wCurItem], a
@@ -77,8 +79,22 @@ OakSpeech:
 	ld [wCurPartySpecies], a
 	call GetMonHeader
 	hlcoord 6, 4
-	call LoadFlippedFrontSpriteByMonIndex
-	call MovePicLeft
+	call LoadFlippedFrontSpriteByMonIndex	
+	ld a, %11100100
+	ld [rBGP], a
+	call UpdateCGBPal_BGP	
+	push af
+	push bc
+	push hl
+	push de
+	ld d, CONVERT_BGP
+	ld e, 0
+	callfar TransferMonPal 
+	pop de
+	pop hl
+	pop bc
+	pop af	
+	call MovePicLeft_NoPalUpdate
 	ld hl, OakSpeechText2
 	call PrintText
 	call GBFadeOutToWhite
@@ -186,6 +202,7 @@ FadeInIntroPic:
 .next
 	ld a, [hli]
 	ldh [rBGP], a
+	call UpdateCGBPal_BGP
 	ld c, 10
 	call DelayFrames
 	dec b
@@ -201,12 +218,13 @@ IntroFadePalettes:
 	dc 3, 2, 1, 0
 
 MovePicLeft:
+	ld a, %11100100
+	ldh [rBGP], a
+	call UpdateCGBPal_BGP
+MovePicLeft_NoPalUpdate:
 	ld a, 119
 	ldh [rWX], a
 	call DelayFrame
-
-	ld a, %11100100
-	ldh [rBGP], a
 .next
 	call DelayFrame
 	ldh a, [rWX]

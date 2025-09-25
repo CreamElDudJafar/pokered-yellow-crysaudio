@@ -6,3 +6,5 @@
 ; Used in SpriteFacingAndAnimationTable (see data/sprites/facings.asm)
 DEF FACING_END  EQU 1 << BIT_END_OF_OAM_DATA
 DEF UNDER_GRASS EQU 1 << BIT_SPRITE_UNDER_GRASS
+
+DEF OAM_HIGH_PALS EQU 1 << 2 ; palettes %100-%111 are OBP1

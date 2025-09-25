@@ -63,10 +63,18 @@ SlidePlayerAndEnemySilhouettesOnScreen:
 	ld a, c
 	ldh [hSCX], a
 	call DelayFrame
-	ld a, %11100100 ; inverted palette for silhouette effect
+	call DelayFrame
+	ld a, [wOnSGB]
+	and a
+	ldpal a, SHADE_BLACK, SHADE_DARK, SHADE_LIGHT, SHADE_WHITE
+	jr nz, .silhouette
+	ldpal a, SHADE_BLACK, SHADE_BLACK, SHADE_BLACK, SHADE_WHITE ; different silhouette on DMG
+.silhouette
 	ldh [rBGP], a
 	ldh [rOBP0], a
 	ldh [rOBP1], a
+	call UpdateCGBPal_OBP0
+	call UpdateCGBPal_OBP1
 .slideSilhouettesLoop ; slide silhouettes of the player's pic and the enemy's pic onto the screen
 	ld h, b
 	ld l, $40
@@ -76,6 +84,11 @@ SlidePlayerAndEnemySilhouettesOnScreen:
 	ld h, $0
 	ld l, $60
 	call SetScrollXForSlidingPlayerBodyLeft ; end background scrolling on line $60
+	push af
+	ld a, b
+	cp $72
+	call z, UpdateCGBPal_BGP
+	pop af
 	call SlidePlayerHeadLeft
 	ld a, c
 	ldh [hSCX], a
@@ -93,6 +106,14 @@ SlidePlayerAndEnemySilhouettesOnScreen:
 	ldh [rWY], a
 	inc a
 	ldh [hAutoBGTransferEnabled], a
+	ld a, [wOnSGB]
+	and a
+	jr nz, .notDmg
+	ldpal a, SHADE_BLACK, SHADE_DARK, SHADE_LIGHT, SHADE_WHITE
+	ldh [rBGP], a
+	ldh [rOBP0], a
+	ldh [rOBP1], a
+.notDmg
 	call Delay3
 	ld b, SET_PAL_BATTLE
 	call RunPaletteCommand
@@ -118,11 +139,7 @@ SlidePlayerHeadLeft:
 	ret
 
 SetScrollXForSlidingPlayerBodyLeft:
-	ldh a, [rLY]
-	cp l
-	jr nz, SetScrollXForSlidingPlayerBodyLeft
-	ld a, h
-	ldh [rSCX], a
+	predef BGLayerScrollingUpdate
 .loop
 	ldh a, [rLY]
 	cp h
@@ -902,6 +919,11 @@ ReplaceFaintedEnemyMon:
 	ld hl, wEnemyHPBarColor
 	ld e, $30
 	call GetBattleHealthBarColor
+	ldpal a, SHADE_BLACK, SHADE_DARK, SHADE_LIGHT, SHADE_WHITE
+	ld [rOBP0], a
+	ld [rOBP1], a
+	call UpdateCGBPal_OBP0
+	call UpdateCGBPal_OBP1
 	callfar DrawEnemyPokeballs
 	ld a, [wLinkState]
 	cp LINK_STATE_BATTLING
@@ -6368,6 +6390,8 @@ LoadPlayerBackPic:
 	ld [hli], a ; OAM tile number
 	inc a ; increment tile number
 	ldh [hOAMTile], a
+	ld a, $2
+	ld [hl], a
 	inc hl
 	dec c
 	jr nz, .innerLoop
@@ -6802,6 +6826,7 @@ DetermineWildOpponent:
 	callfar TryDoWildEncounter
 	ret nz
 InitBattleCommon:
+	callfar CGBSetCPU1xSpeed
 	ld a, [wMapPalOffset]
 	push af
 	ld hl, wLetterPrintingDelayFlags

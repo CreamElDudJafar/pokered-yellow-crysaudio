@@ -19,13 +19,19 @@ VBlank::
 	ldh a, [hWY]
 	ldh [rWY], a
 .ok
-
+	ldh a, [hFlagsFFFA]	;see if BGMap skip has been enabled (such as when updating color )
+	bit 1, a
+	jr nz, .skipBGMap
 	call AutoBgMapTransfer
 	call VBlankCopyBgMap
 	call RedrawRowOrColumn
 	call VBlankCopy
 	call VBlankCopyDouble
 	call UpdateMovingBgTiles
+.skipBGMap
+	ld a, [hFlagsFFFA]
+	bit 0, a
+	jr nz, .skipOAM
 	call hDMARoutine
 	ld a, BANK(PrepareOAMData)
 	ldh [hLoadedROMBank], a
@@ -33,7 +39,7 @@ VBlank::
 	call PrepareOAMData
 
 	; VBlank-sensitive operations end.
-
+.skipOAM
 	call Random
 
 	ldh a, [hVBlankOccurred]

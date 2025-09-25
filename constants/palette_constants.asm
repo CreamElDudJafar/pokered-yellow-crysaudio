@@ -1,3 +1,5 @@
+DEF NUM_ACTIVE_PALS EQU 4
+
 ; monochrome palette color ids
 	const_def
 	const SHADE_WHITE ; %00

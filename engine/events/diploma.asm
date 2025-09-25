@@ -64,6 +64,7 @@ DisplayDiploma::
 	call GBPalNormal
 	ld a, $90
 	ldh [rOBP0], a
+	call UpdateCGBPal_OBP0
 	call WaitForTextScrollButtonPress
 	ld hl, wStatusFlags5
 	res BIT_NO_TEXT_DELAY, [hl]

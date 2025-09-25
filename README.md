@@ -1,6 +1,18 @@
 # pokered-crysaudio
 
-Pokémon Red/Blue with the Pokémon Crystal sound engine stitched in. Made by Sanqui and dannye.
+Pokémon Red/Blue with GBC/Yellow Colors, and the Pokémon Crystal sound engine stitched in. Made by Sanqui and dannye.
+
+Credits for making this SPECIFIC version happen:
+Jojobear13: Game: ShinPokeRed (Originally backporting Pokemon Yellow Functions)
+Vortyne/Vortiene: Game: PureRGB (Also backported Pokemon Yellow Functions)
+RainbowMetalPigeon
+ZetaPhoenix
+Engezerstorung
+
+Tutorials Used:
+https://github.com/pret/pokeyellow/wiki/Free-some-space-in-BANK-1E (RainbowMetalPigeon and Vortiene)
+https://github.com/pret/pokered/wiki/Free-MORE-some-space-in-the-Home-BANK (ZetaPhoenix, Engezerstorung and Vortiene)
+
 
 Original README follows...
 
