@@ -14,7 +14,7 @@ TitleScroll_Out:
 ; Scroll a TitleMon out to the left.
 ; hi: speed
 ; lo: duration
-	db $12, $22, $32, $42, $52, $62, $83, $93, 0
+	db $12, $22, $32, $42, $52, $62, $83, $93, $a3, 0
 
 TitleScroll:
 	ld a, d
@@ -69,6 +69,7 @@ _TitleScroll:
 
 .ScrollBetween:
 	predef BGLayerScrollingUpdate
+
 .wait2
 	ldh a, [rLY] ; rLY
 	cp h

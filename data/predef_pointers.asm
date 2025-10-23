@@ -98,7 +98,7 @@ PredefPointers::
 	add_predef HallOfFamePC
 	add_predef DisplayDexRating
 	add_predef _LeaveMapAnim, $1E ; wrong bank
-	add_predef BGLayerScrollingUpdate
+	add_predef EnterMapAnim, $1E ; wrong bank
 	add_predef GetTileTwoStepsInFrontOfPlayer
 	add_predef CheckForCollisionWhenPushingBoulder
 	add_predef PrintStrengthText
@@ -109,3 +109,4 @@ PredefPointers::
 	add_predef DrawHP2
 	add_predef DisplayElevatorFloorMenu
 	add_predef OaksAideScript
+	add_predef BGLayerScrollingUpdate

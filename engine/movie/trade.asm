@@ -21,6 +21,7 @@ TradeAnimCommon:
 	ld a, [wOptions]
 	push af
 	and %110000
+	ld [wOptions], a
 	ldh a, [hSCY]
 	push af
 	ldh a, [hSCX]

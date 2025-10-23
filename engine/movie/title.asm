@@ -228,7 +228,7 @@ ENDC
 	xor a
 	ld [wUnusedFlag], a
 
-	ld a, (vBGMap0 + $300) / $100
+	ld a, HIGH(vBGMap0 + $300)
 	call TitleScreenCopyTileMapToVRAM
 
 ; Keep scrolling in new mons indefinitely until the user performs input.

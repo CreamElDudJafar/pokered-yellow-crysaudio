@@ -598,6 +598,7 @@ SetAnimationPalette:
 	ld a, $6c
 	ldh [rOBP1], a
 	call UpdateCGBPal_OBP0
+	call UpdateCGBPal_OBP1
 	ret
 
 PlaySubanimation:
@@ -711,8 +712,8 @@ DoBallTossSpecialEffects:
 	jr nc, .skipFlashingEffect
 .flashingEffect ; do a flashing effect if it's Master Ball or Ultra Ball
 	ldh a, [rOBP0]
-	call UpdateCGBPal_OBP0
 	xor %00111100 ; complement colors 1 and 2
+	call UpdateCGBPal_OBP0
 	ldh [rOBP0], a
 .skipFlashingEffect
 	ld a, [wSubAnimCounter]
@@ -854,15 +855,15 @@ DoBlizzardSpecialEffects:
 
 ; flashes the screen at 3 points in the subanimation
 ; unused
-;FlashScreenUnused:
-;	ld a, [wSubAnimCounter]
-;	cp 14
-;	jp z, AnimationFlashScreen
-;	cp 9
-;	jp z, AnimationFlashScreen
-;	cp 2
-;	jp z, AnimationFlashScreen
-;	ret
+FlashScreenUnused:
+	ld a, [wSubAnimCounter]
+	cp 14
+	jp z, AnimationFlashScreen
+	cp 9
+	jp z, AnimationFlashScreen
+	cp 2
+	jp z, AnimationFlashScreen
+	ret
 
 ; function to make the pokemon disappear at the beginning of the animation
 TradeHidePokemon:
@@ -1090,30 +1091,30 @@ AnimationDarkenMonPalette:
 	lb bc, $f9, $f4
 	jr SetAnimationBGPalette
 
-;AnimationUnusedPalette1:
-;	lb bc, $fe, $f8
-;	jr SetAnimationBGPalette
+AnimationUnusedPalette1:
+	lb bc, $fe, $f8
+	jr SetAnimationBGPalette
 
-;AnimationUnusedPalette2:
-;	lb bc, $ff, $ff
-;	jr SetAnimationBGPalette
+AnimationUnusedPalette2:
+	lb bc, $ff, $ff
+	jr SetAnimationBGPalette
 
 AnimationResetScreenPalette:
 ; Restores the screen's palette to the normal palette.
 	lb bc, $e4, $e4
 	jr SetAnimationBGPalette
 
-;AnimationUnusedPalette3:
-;	lb bc, $00, $00
-;	jr SetAnimationBGPalette
+AnimationUnusedPalette3:
+	lb bc, $00, $00
+	jr SetAnimationBGPalette
 
 AnimationLightScreenPalette:
 ; Changes the screen to use a palette with light colors.
 	lb bc, $90, $90
 	jr SetAnimationBGPalette
 
-;AnimationUnusedPalette4:
-;	lb bc, $40, $40
+AnimationUnusedPalette4:
+	lb bc, $40, $40
 
 SetAnimationBGPalette:
 	ld a, [wOnSGB]
