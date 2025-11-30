@@ -5,6 +5,7 @@ BankswitchHome::
 	ldh a, [hLoadedROMBank]
 	ld [wBankswitchHomeSavedROMBank], a
 	ld a, [wBankswitchHomeTemp]
+BankswitchCommon::
 	ldh [hLoadedROMBank], a
 	ld [rROMB], a
 	ret
