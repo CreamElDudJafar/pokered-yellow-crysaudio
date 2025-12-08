@@ -311,6 +311,8 @@ INCLUDE "gfx/version.asm"
 
 SECTION "bank1C", ROMX
 
+INCLUDE "engine/movie/splash.asm"
+INCLUDE "engine/movie/hall_of_fame.asm"
 INCLUDE "engine/overworld/healing_machine.asm"
 INCLUDE "engine/overworld/player_animations.asm"
 INCLUDE "engine/battle/ghost_marowak_anim.asm"
@@ -353,13 +355,6 @@ INCLUDE "data/battle_anims/frame_blocks.asm"
 INCLUDE "engine/movie/evolution.asm"
 INCLUDE "engine/overworld/elevator.asm"
 INCLUDE "engine/items/tm_prices.asm"
-
-
-SECTION "Splash Animation", ROMX
-
-; moved from bank1C
-INCLUDE "engine/movie/splash.asm"
-INCLUDE "engine/movie/hall_of_fame.asm"
 
 
 SECTION "CGB Mode Code", ROMX

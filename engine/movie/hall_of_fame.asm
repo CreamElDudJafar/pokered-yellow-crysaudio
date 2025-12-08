@@ -77,7 +77,7 @@ AnimateHallOfFame:
 	ld bc, HOF_MON
 	call AddNTimes
 	ld [hl], $ff
-	callfar SaveHallOfFameTeams
+	call SaveHallOfFameTeams
 	xor a
 	ld [wHoFMonSpecies], a
 	inc a
