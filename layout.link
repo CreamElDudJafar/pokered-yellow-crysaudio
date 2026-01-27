@@ -177,6 +177,8 @@ ROMX $2B
 	"Pokédex Text"
 ROMX $2C
 	"Move Names"
+ROMX $2D
+	"CGB Mode Code"
 WRAM0
 	"Audio RAM"
 	org $c100
@@ -188,7 +190,8 @@ WRAM0
 	"Party Data"
 	"Main Data"
 	"Current Box Data"
-	org $df00
+	"CGB Palette Data"
+	org $df1e
 	"Stack"
 VRAM
 	"VRAM"

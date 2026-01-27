@@ -38,6 +38,8 @@ VermilionDock_Script:
 
 VermilionDockSSAnneLeavesScript:
 	SetEventForceReuseHL EVENT_SS_ANNE_LEFT
+	callfar CGBSetCPU1xSpeed
+	call GBPalNormal
 	ld a, SFX_STOP_ALL_MUSIC
 	ld [wJoyIgnore], a
 ;	ld [wNewSoundID], a
@@ -63,6 +65,7 @@ VermilionDockSSAnneLeavesScript:
 	ldh [hAutoBGTransferEnabled], a
 	ld [wSSAnneSmokeDriftAmount], a
 	ldh [rOBP1], a
+	call UpdateCGBPal_OBP1
 	ld a, 88
 	ld [wSSAnneSmokeX], a
 	ld hl, wMapViewVRAMPointer
@@ -117,6 +120,7 @@ VermilionDockSSAnneLeavesScript:
 	dec hl
 	ld [hl], c
 	call LoadPlayerSpriteGraphics
+	callfar CGBSetCPU2xSpeed
 	ld hl, wNumberOfWarps
 	dec [hl]
 	ret
@@ -168,11 +172,7 @@ VermilionDock_SyncScrollWithLY:
 	ld h, $0
 	ld l, $80
 .sync_scroll_ly
-	ldh a, [rLY]
-	cp l
-	jr nz, .sync_scroll_ly
-	ld a, h
-	ldh [rSCX], a
+	predef BGLayerScrollingUpdate
 .wait_for_ly_match
 	ldh a, [rLY]
 	cp h

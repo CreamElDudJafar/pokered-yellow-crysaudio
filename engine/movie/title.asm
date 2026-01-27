@@ -145,6 +145,12 @@ ENDC
 	call GBPalNormal
 	ld a, %11100100
 	ldh [rOBP0], a
+	call UpdateCGBPal_OBP0
+
+	push de
+	lb de, CONVERT_BGP, 2
+	farcall TransferMonPal
+	pop de
 
 ; make pokemon logo bounce up and down
 	ld bc, hSCY ; background scroll Y
@@ -223,6 +229,9 @@ ENDC
 	xor a
 	ld [wUnusedFlag], a
 
+	ld a, HIGH(vBGMap0 + $300)
+	call TitleScreenCopyTileMapToVRAM
+
 ; Keep scrolling in new mons indefinitely until the user performs input.
 .awaitUserInterruptionLoop
 	ld c, 200
@@ -289,6 +298,10 @@ TitleScreenPickNewMon:
 
 	ld [hl], a
 	call LoadTitleMonSprite
+	push de
+	lb de, CONVERT_BGP, 2
+	farcall TransferMonPal
+	pop de
 
 	ld a, $90
 	ldh [hWY], a
@@ -299,19 +312,12 @@ TitleScreenPickNewMon:
 TitleScreenScrollInMon:
 	ld d, 0 ; scroll in
 	farcall TitleScroll
-	xor a
+	ld a, $40
 	ldh [hWY], a
 	ret
 
 ScrollTitleScreenGameVersion:
-.wait
-	ldh a, [rLY]
-	cp l
-	jr nz, .wait
-
-	ld a, h
-	ldh [rSCX], a
-
+	predef BGLayerScrollingUpdate
 .wait2
 	ldh a, [rLY]
 	cp h
@@ -342,6 +348,12 @@ DrawPlayerCharacter:
 	ld e, a
 	ld a, [wPlayerCharacterOAMTile]
 	ld [hli], a ; tile
+	push af
+	ld a, [hl]
+	and %11111000
+	or  %00000010
+	ld [hl], a
+	pop af
 	inc a
 	ld [wPlayerCharacterOAMTile], a
 	inc hl

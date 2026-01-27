@@ -15,6 +15,8 @@ DrawFrameBlock:
 	ld a, [wFBTileCounter]
 	inc a
 	ld [wFBTileCounter], a
+	ld a, 2
+	ld [wdef4], a
 	ld a, [wSubAnimTransform]
 	dec a
 	jr z, .flipHorizontalAndVertical   ; SUBANIMTYPE_HVFLIP
@@ -46,6 +48,12 @@ DrawFrameBlock:
 .finishCopying ; finish copying values to OAM (when subanimation not transformed)
 	add [hl] ; X offset
 	ld [de], a ; store X
+	cp 88
+	jr c, .asm_78056
+	ld a, [wdef4]
+	inc a
+	ld [wdef4], a
+.asm_78056
 	inc hl
 	inc de
 	ld a, [hli]
@@ -53,6 +61,9 @@ DrawFrameBlock:
 	ld [de], a ; store tile ID
 	inc de
 	ld a, [hli]
+	ld b, a
+	ld a, [wdef4]
+	or b
 	ld [de], a ; store flags
 	inc de
 	jp .nextTile
@@ -71,6 +82,12 @@ DrawFrameBlock:
 	ld a, 168
 	sub b ; flip X coordinate
 	ld [de], a ; store X
+	cp 88
+	jr c, .asm_78087
+	ld a, [wdef4]
+	inc a
+	ld [wdef4], a
+.asm_78087
 	inc hl
 	inc de
 	ld a, [hli]
@@ -90,7 +107,8 @@ DrawFrameBlock:
 	jr z, .storeFlags1
 	ld b, 0
 .storeFlags1
-	ld a, b
+	ld a, [wdef4]
+	or b
 	ld [de], a
 	inc de
 	jp .nextTile
@@ -107,6 +125,12 @@ DrawFrameBlock:
 	ld a, 168
 	sub b ; flip X coordinate
 	ld [de], a ; store X
+	cp 88
+	jr c, .asm_780c8
+	ld a, [wdef4]
+	inc a
+	ld [wdef4], a
+.asm_780c8
 	inc hl
 	inc de
 	ld a, [hli]
@@ -122,6 +146,9 @@ DrawFrameBlock:
 .disableHorizontalFlip
 	res B_OAM_XFLIP, a
 .storeFlags2
+	ld b, a
+	ld a, [wdef4]
+	or b
 	ld [de], a
 	inc de
 .nextTile
@@ -249,6 +276,7 @@ PlayAnimation:
 	push af
 	ld a, [wAnimPalette]
 	ldh [rOBP0], a
+	call UpdateCGBPal_OBP0
 	call LoadMoveAnimationTiles
 	vc_hook Reduce_move_anim_flashing_Mega_Punch_Self_Destruct_Explosion
 	call LoadSubanimation
@@ -258,6 +286,7 @@ PlayAnimation:
 	pop af
 	vc_hook_red Stop_reducing_move_anim_flashing_Blizzard
 	ldh [rOBP0], a
+	call UpdateCGBPal_OBP0
 .nextAnimationCommand
 	vc_hook_red Stop_reducing_move_anim_flashing_Hyper_Beam
 	vc_hook_blue Stop_reducing_move_anim_flashing_Bubblebeam_Hyper_Beam_Blizzard
@@ -391,15 +420,6 @@ MoveAnimationTiles2:
 MoveAnimationTiles1:
 	INCBIN "gfx/battle/move_anim_1.2bpp"
 
-SlotMachineTiles2:
-IF DEF(_RED)
-	INCBIN "gfx/slots/red_slots_2.2bpp"
-ENDC
-IF DEF(_BLUE)
-	INCBIN "gfx/slots/blue_slots_2.2bpp"
-ENDC
-SlotMachineTiles2End:
-
 MoveAnimation:
 	push hl
 	push de
@@ -439,7 +459,7 @@ MoveAnimation:
 	call WaitForSoundToFinish
 	xor a
 	ld [wSubAnimSubEntryAddr], a
-	ld [wUnusedMoveAnimByte], a
+;	ld [wUnusedMoveAnimByte], a
 	ld [wSubAnimTransform], a
 	dec a ; NO_MOVE - 1
 	ld [wAnimSoundID], a
@@ -567,6 +587,8 @@ SetAnimationPalette:
 	ldh [rOBP0], a
 	ld a, $6c
 	ldh [rOBP1], a
+	call UpdateCGBPal_OBP0
+	call UpdateCGBPal_OBP1
 	ret
 .notSGB
 	ld a, $e4
@@ -575,6 +597,8 @@ SetAnimationPalette:
 	ldh [rOBP0], a
 	ld a, $6c
 	ldh [rOBP1], a
+	call UpdateCGBPal_OBP0
+	call UpdateCGBPal_OBP1
 	ret
 
 PlaySubanimation:
@@ -689,6 +713,7 @@ DoBallTossSpecialEffects:
 .flashingEffect ; do a flashing effect if it's Master Ball or Ultra Ball
 	ldh a, [rOBP0]
 	xor %00111100 ; complement colors 1 and 2
+	call UpdateCGBPal_OBP0
 	ldh [rOBP0], a
 .skipFlashingEffect
 	ld a, [wSubAnimCounter]
@@ -979,6 +1004,7 @@ AnimationFlashScreenLong:
 	cp 1
 	jr z, .endOfPalettes
 	ldh [rBGP], a
+	call UpdateCGBPal_BGP
 	call FlashScreenLongDelay
 	jr .innerLoop
 .endOfPalettes
@@ -1042,14 +1068,17 @@ AnimationFlashScreen:
 	push af ; save initial palette
 	ld a, %00011011 ; 0, 1, 2, 3 (inverted colors)
 	ldh [rBGP], a
+	call UpdateCGBPal_BGP
 	ld c, 2
 	call DelayFrames
 	xor a ; white out background
 	ldh [rBGP], a
+	call UpdateCGBPal_BGP
 	ld c, 2
 	call DelayFrames
 	pop af
 	ldh [rBGP], a ; restore initial palette
+	call UpdateCGBPal_BGP
 	ret
 
 AnimationDarkScreenPalette:
@@ -1095,6 +1124,7 @@ SetAnimationBGPalette:
 	ld a, c
 .next
 	ldh [rBGP], a
+	call UpdateCGBPal_BGP
 	ret
 
 AnimationUnusedShakeScreen: ; unreferenced
@@ -1127,12 +1157,12 @@ AnimationWaterDropletsEverywhere:
 	ld a, 16
 	ld [wBaseCoordY], a
 	ld a, 0
-	ld [wUnusedWaterDropletsByte], a
+;	ld [wUnusedWaterDropletsByte], a
 	call _AnimationWaterDroplets
 	ld a, 24
 	ld [wBaseCoordY], a
 	ld a, 32
-	ld [wUnusedWaterDropletsByte], a
+;	ld [wUnusedWaterDropletsByte], a
 	call _AnimationWaterDroplets
 	dec d
 	jr nz, .loop
@@ -1141,14 +1171,30 @@ AnimationWaterDropletsEverywhere:
 _AnimationWaterDroplets:
 	ld hl, wShadowOAM
 .loop
+	ld a, $1
+	ld [wdef4], a
 	ld a, [wBaseCoordY]
 	ld [hli], a ; Y
+	cp 40
+	jr c, .asm_792d7
+	ld a, [wdef4]
+	inc a
+	ld [wdef4], a
+.asm_792d7
 	ld a, [wBaseCoordX]
 	add 27
 	ld [wBaseCoordX], a
 	ld [hli], a ; X
+	cp 88
+	jr c, .asm_792ee
+	ld a, [wdef4]
+	and $2
+	and $3
+	ld [wdef4], a
+.asm_792ee
 	ld a, [wDropletTile]
 	ld [hli], a ; tile
+	ld a, [wdef4]
 	xor a
 	ld [hli], a ; attribute
 	ld a, [wBaseCoordX]
@@ -1293,15 +1339,29 @@ BattleAnimWriteOAMEntry:
 ; X coordinate = [wBaseCoordX]
 ; tile = d
 ; attributes = 0
+	ld a, $1
+	ld [wdef4], a
 	ld a, e
 	add 8
 	ld e, a
 	ld [hli], a
+	cp 40
+	jr c, .asm_793d8
+	ld a, [wdef4]
+	inc a
+	ld [wdef4], a
+.asm_793d8
 	ld a, [wBaseCoordX]
 	ld [hli], a
+	cp 88
+	jr c, .asm_793e8
+	ld a, [wdef4]
+	add $2
+	ld [wdef4], a
+.asm_793e8
 	ld a, d
 	ld [hli], a
-	xor a
+	ld a, [wdef4]
 	ld [hli], a
 	ret
 
@@ -1506,6 +1566,8 @@ AnimationSpiralBallsInward:
 	ld a, [hl]
 	cp $ff
 	jr z, .done
+	ld a, $2
+	ld [wdef4], a
 	ld a, [wSpiralBallsBaseY]
 	add [hl]
 	ld [de], a ; Y
@@ -1514,9 +1576,20 @@ AnimationSpiralBallsInward:
 	ld a, [wSpiralBallsBaseX]
 	add [hl]
 	ld [de], a ; X
+	cp 88
+	jr c, .asm_79524
+	ld a, $3
+	ld [wdef4], a
+.asm_79524
 	inc hl
 	inc de
 	inc de
+	ld a, [de]
+	and $f0
+	ld b, a
+	ld a, [wdef4]
+	or b
+	ld [de], a
 	inc de
 	dec c
 	jr nz, .innerLoop
@@ -2334,12 +2407,14 @@ AnimationLeavesFalling:
 	push af
 	ld a, [wAnimPalette]
 	ldh [rOBP0], a
+	call UpdateCGBPal_OBP0
 	ld d, $37 ; leaf tile
 	ld a, 3 ; number of leaves
 	ld [wNumFallingObjects], a
 	call AnimationFallingObjects
 	pop af
 	ldh [rOBP0], a
+	call UpdateCGBPal_OBP0
 	ret
 
 AnimationPetalsFalling:
@@ -2395,6 +2470,8 @@ FallingObjects_UpdateOAMEntry:
 ; movement byte.
 	ld hl, wShadowOAM
 	add hl, de
+	ld a, 1
+	ld [wdef4], a
 	ld a, [hl]
 	inc a
 	inc a
@@ -2403,6 +2480,12 @@ FallingObjects_UpdateOAMEntry:
 	ld a, SCREEN_HEIGHT_PX + OAM_Y_OFS ; if Y >= 112, put it off-screen
 .next
 	ld [hli], a ; Y
+	cp 40
+	jr c, .asm_79e51
+	ld a, [wdef4]
+	inc a
+	ld [wdef4], a
+.asm_79e51
 	ld a, [wFallingObjectMovementByte]
 	ld b, a
 	ld de, FallingObjects_DeltaXs
@@ -2419,6 +2502,13 @@ FallingObjects_UpdateOAMEntry:
 	ld a, [de]
 	add [hl]
 	ld [hli], a ; X
+	cp 88
+	jr c, .asm_79e75
+	ld a, [wdef4]
+	add $2
+	and $3
+	ld [wdef4], a
+.asm_79e75
 	inc hl
 	xor a ; no horizontal flip
 	jr .next2
@@ -2428,9 +2518,19 @@ FallingObjects_UpdateOAMEntry:
 	ld a, [hl]
 	sub b
 	ld [hli], a ; X
+	cp 88
+	jr c, .asm_79e5c
+	ld a, [wdef4]
+	add $2
+	and $3
+	ld [wdef4], a
+.asm_79e5c
 	inc hl
 	ld a, OAM_XFLIP
 .next2
+	ld b, a
+	ld a, [wdef4]
+	or b
 	ld [hl], a ; attribute
 	ret
 
@@ -2515,6 +2615,13 @@ AnimationShakeEnemyHUD:
 	ld hl, vBGMap1 - $20 * 7
 	call BattleAnimCopyTileMapToVRAM
 
+	ldh a, [hCGB]
+	and a
+	jr z, .notCGB
+	ld d, 13
+	farcall LoadBGMapAttributes
+.notCGB
+
 ; Move the window so that the row below the enemy HUD (in BG map 0) lines up
 ; with the top row of the window on the screen. This makes it so that the window
 ; covers everything below the enemy HD with a copy that looks just like what
@@ -2548,6 +2655,12 @@ AnimationShakeEnemyHUD:
 	ldh [hWY], a
 	ld hl, vBGMap1
 	call BattleAnimCopyTileMapToVRAM
+	ldh a, [hCGB]
+	and a
+	jr z, .notCGB2
+	ld d, 11
+	farcall LoadBGMapAttributes
+.notCGB2
 	xor a
 	ldh [hWY], a
 	call SaveScreenTilesToBuffer1

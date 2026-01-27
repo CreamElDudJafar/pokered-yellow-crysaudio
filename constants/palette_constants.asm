@@ -1,3 +1,5 @@
+DEF NUM_ACTIVE_PALS EQU 4
+
 ; pal/blk packets
 ; SetPalFunctions indexes (see engine/gfx/palettes.asm)
 	const_def

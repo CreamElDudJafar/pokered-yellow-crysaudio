@@ -185,6 +185,8 @@ INCLUDE "text/PokemonFanClub.asm"
 INCLUDE "text/VermilionMart.asm"
 INCLUDE "text/VermilionGym.asm"
 
+INCLUDE "engine/battle/just_slot_machine_stuff.asm" ; Moved from bank 1E
+
 
 SECTION "Text 8", ROMX
 

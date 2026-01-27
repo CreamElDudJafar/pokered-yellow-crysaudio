@@ -10,6 +10,7 @@ DisplayStartMenu::
 RedisplayStartMenu::
 	farcall DrawStartMenu
 	farcall PrintSafariZoneSteps ; print Safari Zone info, if in Safari Zone
+	call LoadGBPal
 	call UpdateSprites
 .loop
 	call HandleMenuInput

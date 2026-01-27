@@ -43,7 +43,7 @@ Init::
 	call ClearVram
 
 	ld hl, STARTOF(HRAM)
-	ld bc, SIZEOF(HRAM)
+	ld bc, SIZEOF(HRAM) - 1
 	call FillMemory
 
 	call ClearSprites
