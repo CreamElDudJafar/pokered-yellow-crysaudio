@@ -51,6 +51,7 @@ INCLUDE "home/names.asm"
 INCLUDE "home/reload_tiles.asm"
 INCLUDE "home/item.asm"
 INCLUDE "home/textbox.asm"
+INCLUDE "home/cgb_palettes.asm" ; added from yellow
 INCLUDE "home/npc_movement.asm"
 INCLUDE "home/trainers.asm"
 INCLUDE "home/map_objects.asm"
