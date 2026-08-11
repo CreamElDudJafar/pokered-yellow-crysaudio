@@ -912,6 +912,7 @@ CableClub_Run:
 	predef EmptyFunc
 	jp Init
 .doBattleOrTrade
+	callfar CGBSetCPU1xSpeed
 	call CableClub_DoBattleOrTrade
 	ld hl, Club_GFX
 	ld a, h
