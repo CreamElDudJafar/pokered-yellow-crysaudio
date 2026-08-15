@@ -56,7 +56,7 @@ HallOfFameResetEventsAndSaveScript:
 	dec b
 	jr nz, .delayLoop
 	call WaitForTextScrollButtonPress
-	jp Init
+	jp SoftReset ;fix an issue where junk tiles display for 1 frame because SoftReset whites-out the screen
 
 HallOfFameDefaultScript:
 	ld a, PAD_BUTTONS | PAD_CTRL_PAD
