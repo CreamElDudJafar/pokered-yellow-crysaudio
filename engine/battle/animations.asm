@@ -286,6 +286,7 @@ PlayAnimation:
 	pop af
 	vc_hook_red Stop_reducing_move_anim_flashing_Blizzard
 	ldh [rOBP0], a
+	call DelayFrame
 	call UpdateCGBPal_OBP0
 .nextAnimationCommand
 	vc_hook_red Stop_reducing_move_anim_flashing_Hyper_Beam
@@ -1309,6 +1310,14 @@ _AnimationSlideMonUp:
 ShakeEnemyHUD_WritePlayerMonPicOAM:
 ; Writes the OAM entries for a copy of the player mon's pic in OAM.
 ; The top 5 rows are reproduced in OAM, although only 2 are actually needed.
+	ldh a, [hCGB]
+	and a
+	jr z, .notCGB
+	ld a, [wBattleMonSpecies]
+	ld [wCurPartySpecies], a
+	lb de, CONVERT_OBP0, 1
+	callfar TransferMonPal
+.notCGB
 	ld a, $10
 	ld [wBaseCoordX], a
 	ld a, $30

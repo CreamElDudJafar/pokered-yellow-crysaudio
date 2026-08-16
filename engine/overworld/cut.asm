@@ -102,7 +102,9 @@ InitCutAnimOAM:
 	call WriteCutOrBoulderDustAnimationOAMBlock
 	ld hl, wShadowOAMSprite36Attributes
 	ld de, OBJ_SIZE
-	ld a, OAM_XFLIP | OAM_PAL1
+	ld a, [hl]
+	and $0f
+	or OAM_XFLIP | OAM_PAL1
 	ld c, e
 .loop
 	ld [hl], a
