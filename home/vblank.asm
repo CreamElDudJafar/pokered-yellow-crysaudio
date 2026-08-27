@@ -104,6 +104,9 @@ DEF NOT_VBLANKED EQU 1
 
 	ld a, NOT_VBLANKED
 	ldh [hVBlankOccurred], a
+	ldh a, [rLCDC]
+	bit 7, a
+	jp z, VBlank
 .halt
 	halt
 	ldh a, [hVBlankOccurred]

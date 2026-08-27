@@ -46,7 +46,6 @@ SlidePlayerAndEnemySilhouettesOnScreen:
 .noCarry
 	dec b
 	jr nz, .copyRowLoop
-	call EnableLCD
 	ld a, $90
 	ldh [hWY], a
 	ldh [rWY], a
@@ -75,6 +74,7 @@ SlidePlayerAndEnemySilhouettesOnScreen:
 	ldh [rOBP1], a
 	call UpdateCGBPal_OBP0
 	call UpdateCGBPal_OBP1
+	call EnableLCD
 .slideSilhouettesLoop ; slide silhouettes of the player's pic and the enemy's pic onto the screen
 	ld h, b
 	ld l, $40
@@ -101,6 +101,9 @@ SlidePlayerAndEnemySilhouettesOnScreen:
 	ldh [hStartTileID], a
 	hlcoord 1, 5
 	predef CopyUncompressedPicToTilemap
+	xor a
+	ldh [hSCX], a
+	call Delay3
 	xor a
 	ldh [hWY], a
 	ldh [rWY], a
