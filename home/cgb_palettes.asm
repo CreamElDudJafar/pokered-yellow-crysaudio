@@ -66,7 +66,7 @@ UpdateCGBPal_OBP1::
 	pop af
 	ret
 
-Func_3082::
+UpdateAudioDuringLoadBGMapAttributes::
 	ldh a, [hLoadedROMBank]
 	push af
 
