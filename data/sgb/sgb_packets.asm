@@ -131,7 +131,7 @@ BlkPacket_GameFreakIntro:
 	ds 12, 0
 
 
-UnknownPacket_72751:
+BlkPacket_PikachusBeachTitle:
 	ATTR_BLK 1
 	ATTR_BLK_DATA %111, 1,1,0, 04,00, 15,05
 	ds 8

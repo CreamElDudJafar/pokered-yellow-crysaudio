@@ -935,7 +935,7 @@ palPacketPointersStart::
 	dw wTrainerCardBlkPacket
 	dw BlkPacket_GameFreakIntro
 	dw wPalPacket
-	dw UnknownPacket_72751
+	dw BlkPacket_PikachusBeachTitle
 palPacketPointersEnd::
 
 CopySGBBorderTiles:
